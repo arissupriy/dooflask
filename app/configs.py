@@ -14,6 +14,8 @@ class Config:
         
         os.environ['FLASK_ENV'] = self.ConfigParser('project').get('status', 'development')
         os.environ['FLASK_APP'] = self.project_name
+        os.environ['DOOFLASK_PORT'] = self.ConfigParser('project').get('port', 5000)
+        os.environ['DOOFLASK_HOST'] = self.ConfigParser('project').get('host', 'localhost')
     
     def ConfigParser(self, section):
         dict1 = {}
