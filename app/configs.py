@@ -8,15 +8,30 @@ BASE = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 CONF = configparser.ConfigParser()
 CONF.read(os.path.join(BASE, 'dooflask.conf'))
 
+def ConfigParser(section):
+    dict1 = {}
+    options = CONF.options(section)
+    for option in options:
+        try:
+            dict1[option] = CONF.get(section, option)
+            if dict1[option] == -1:
+                DebugPrint("skip: %s" % option)
+        except:
+            print("exception on %s!" % option)
+            dict1[option] = None
+    return dict1
+
 class Config:
     def __init__(self):
         self.project_name = self.ConfigParser('project').get('name', 'app')
+        self.modules = self.ConfigParser('project').get('modules_path', 'modules')
         
         os.environ['FLASK_ENV'] = self.ConfigParser('project').get('status', 'development')
         os.environ['FLASK_APP'] = self.project_name
         os.environ['DOOFLASK_PORT'] = self.ConfigParser('project').get('port', 5000)
         os.environ['DOOFLASK_HOST'] = self.ConfigParser('project').get('host', 'localhost')
     
+
     def ConfigParser(self, section):
         dict1 = {}
         options = CONF.options(section)
@@ -29,6 +44,10 @@ class Config:
                 print("exception on %s!" % option)
                 dict1[option] = None
         return dict1
+    
+    @property
+    def modules_path(self):
+        return os.path.join(BASE, self.modules)
 
     @property
     def database(self):
